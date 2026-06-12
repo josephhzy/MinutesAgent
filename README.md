@@ -158,15 +158,32 @@ James will draft customer comms.
 3. James - Draft customer comms - TBD
 ```
 
+## Testing
+
+The core logic (input validation, prompt building, error handling, and the
+agent orchestration) is covered by an offline test suite. The tests inject a
+fake LLM/agent, so **they run without an API key and without any network call**.
+
+```bash
+pip install -r requirements-dev.txt
+pytest -v
+```
+
+This works because `minute_writer.py` has no side effects at import time — the
+LLM is built lazily and the `summarize_notes` / `extract_items` / `run_minute_writer`
+functions accept an injectable `llm`/`agent` argument that the tests fake out.
+
 ## Project Structure
 
 ```
 .
-├── minute_writer.py     # Main agent code (fully commented)
-├── requirements.txt     # Python dependencies
-├── .env.example         # API key template
-├── .gitignore           # Keeps secrets and venv out of git
-└── README.md            # This file
+├── minute_writer.py        # Main agent code (fully commented)
+├── test_minute_writer.py   # Offline unit tests (pytest, no API key needed)
+├── requirements.txt        # Runtime dependencies
+├── requirements-dev.txt    # Dev/test dependencies (pytest)
+├── .env.example            # API key template
+├── .gitignore              # Keeps secrets, venv, and caches out of git
+└── README.md               # This file
 ```
 
 ## Tech Stack
@@ -181,3 +198,5 @@ James will draft customer comms.
 - **Three layered prompts.** The system prompt orchestrates tool order; each tool's internal `PromptTemplate` handles its specific transformation.
 - **Hallucination defenses.** Each tool has explicit *"do not invent"* rules and defined defaults (*"Not specified"*, *"No action items identified."*, *"Unassigned"*, *"TBD"*) for missing data.
 - **Scope refusal.** The system prompt instructs the agent to refuse non-meeting-note input rather than fabricating content.
+- **Input validation & error handling.** Empty or non-string notes raise a clear `ValueError` *before* any LLM call; LLM/API failures are caught and re-raised as a friendly `RuntimeError`. The interactive loop recovers from both instead of crashing.
+- **Import-safe & testable.** No OpenAI client is built and no key is read at import time, so the module can be imported and unit-tested offline (see [Testing](#testing)).

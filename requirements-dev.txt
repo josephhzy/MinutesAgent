@@ -1,0 +1,7 @@
+# Development / test dependencies.
+# Install with:  pip install -r requirements-dev.txt
+# (this also installs everything in requirements.txt)
+
+-r requirements.txt
+
+pytest>=8.0.0

@@ -1,13 +1,14 @@
-# =============================================================
-# Requirements for LangChain Minute Writer Agent
-# =============================================================
-# langchain       - The core framework for building LLM applications
-# langchain-openai - OpenAI integration for LangChain
-# openai          - OpenAI Python SDK (used by langchain-openai under the hood)
-# python-dotenv   - Loads environment variables from .env file (keeps API keys safe)
-# =============================================================
+# Runtime dependencies for the LangChain Minute Writer Agent.
+#
+#   langchain        - core framework; provides create_agent (1.x API)
+#   langchain-openai - OpenAI integration for LangChain (must match langchain 1.x)
+#   openai           - OpenAI Python SDK used by langchain-openai under the hood
+#   python-dotenv    - loads the OpenAI key from a .env file (keeps it out of git)
+#
+# create_agent lives in langchain.agents only from 1.0 onward, so langchain and
+# langchain-openai are pinned to >=1.0.0 (0.3.x would import-fail at startup).
 
-langchain>=0.3.0
-langchain-openai>=0.3.0
+langchain>=1.0.0
+langchain-openai>=1.0.0
 openai>=1.0.0
 python-dotenv>=1.0.0
